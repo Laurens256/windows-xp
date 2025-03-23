@@ -1,0 +1,4 @@
+:root {
+	--title-bar-button-hover-filter: brightness(1.2);
+	--title-bar-button-active-filter: brightness(0.75);
+}

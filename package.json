@@ -1,0 +1,40 @@
+{
+	"name": "window-manager",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev --port 3000 --host",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "eslint ."
+	},
+	"devDependencies": {
+		"@eslint/compat": "1.2.5",
+		"@stylistic/eslint-plugin-js": "2.13.0",
+		"@sveltejs/adapter-auto": "4.0.0",
+		"@sveltejs/kit": "2.17.2",
+		"@sveltejs/vite-plugin-svelte": "5.0.3",
+		"@types/eslint": "9.6.1",
+		"@types/wicg-file-system-access": "2023.10.5",
+		"cssnano": "7.0.6",
+		"eslint": "9.18.0",
+		"eslint-plugin-svelte": "2.46.1",
+		"globals": "15.6.0",
+		"postcss": "8.5.1",
+		"postcss-preset-env": "10.1.3",
+		"svelte": "5.19.3",
+		"svelte-check": "3.6.0",
+		"tslib": "2.6.3",
+		"typescript": "5.5.4",
+		"typescript-eslint": "8.21.0",
+		"vite": "6.0.9"
+	},
+	"dependencies": {
+		"@neodrag/svelte": "2.3.0",
+		"native-file-system-adapter": "3.0.1",
+		"svelte-resize-observer-action": "0.0.4"
+	},
+	"type": "module"
+}
