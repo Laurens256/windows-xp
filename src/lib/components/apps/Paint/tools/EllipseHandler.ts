@@ -16,6 +16,7 @@ class EllipseHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.ELLIPSE,
 			isSelectionAware: true,
+			isCursorSizeAware: true,
 			...args,
 		});
 	}
@@ -25,6 +26,7 @@ class EllipseHandler extends BaseToolHandler implements ToolHandler {
 			layers: [this.previewLayer],
 			color,
 			cursorSize,
+			isRound: true,
 		});
 	}
 

@@ -16,6 +16,7 @@ class LineHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.LINE,
 			isSelectionAware: true,
+			isCursorSizeAware: true,
 			...args,
 		});
 	}

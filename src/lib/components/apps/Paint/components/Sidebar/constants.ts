@@ -1,5 +1,5 @@
 import { ToolId } from '$apps/Paint/constants';
-import { PaintIconBucket, PaintIconEllipse, PaintIconEraser, PaintIconEyedropper, PaintIconPencil, PaintIconFreeSelect, PaintIconPolygon, PaintIconRectangle, PaintIconRectangleSelect, PaintIconRoundedRectangle, PaintIconLine, PaintIconText } from './icons';
+import { PaintIconBucket, PaintIconEllipse, PaintIconEraser, PaintIconEyedropper, PaintIconPencil, PaintIconFreeSelect, PaintIconPolygon, PaintIconRectangle, PaintIconRectangleSelect, PaintIconRoundedRectangle, PaintIconLine, PaintIconText, PaintIconMagnifier } from './icons';
 import {
 	BucketHandler,
 	EllipseHandler,
@@ -11,7 +11,9 @@ import {
 	RectangleHandler,
 	RectangleSelectHandler,
 	LineHandler,
-	RoundedRectangleHandler, TextHandler,
+	RoundedRectangleHandler,
+	TextHandler,
+	MagnifierHandler,
 } from '../../tools';
 import type { BaseToolHandlerPropsFromHandler, ToolHandlerClass } from '../../types';
 
@@ -52,6 +54,12 @@ const tools: ToolEntry[] = [
 		toolId: ToolId.EYEDROPPER,
 		handler: EyedropperHandler,
 		icon: PaintIconEyedropper,
+	},
+	{
+		label: 'Magnifier',
+		toolId: ToolId.MAGNIFIER,
+		handler: MagnifierHandler,
+		icon: PaintIconMagnifier,
 	},
 	{
 		label: 'Pencil',

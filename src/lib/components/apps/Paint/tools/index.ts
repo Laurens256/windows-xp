@@ -10,6 +10,7 @@ import EllipseHandler from './EllipseHandler';
 import PolygonHandler from './PolygonHandler';
 import RoundedRectangleHandler from './RoundedRectangleHandler';
 import TextHandler from './TextHandler';
+import MagnifierHandler from './MagnifierHandler';
 
 export {
 	PencilHandler,
@@ -24,4 +25,5 @@ export {
 	PolygonHandler,
 	RoundedRectangleHandler,
 	TextHandler,
+	MagnifierHandler,
 };

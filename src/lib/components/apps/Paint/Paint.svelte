@@ -33,5 +33,9 @@
     height: 100%;
     overflow: hidden;
     position: relative;
+
+		&:not(:hover) :global(#cursor) {
+			opacity: 0;
+		}
 	}
 </style>

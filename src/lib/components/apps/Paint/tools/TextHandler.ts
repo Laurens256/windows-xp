@@ -19,6 +19,7 @@ class TextHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.TEXT,
 			isSelectionAware: true,
+			isCursorSizeAware: false,
 			...args,
 		});
 		this.textField.addEventListener('input', this.handleInput as () => void);

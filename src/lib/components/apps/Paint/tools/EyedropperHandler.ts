@@ -7,6 +7,8 @@ class EyedropperHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.EYEDROPPER,
 			isSelectionAware: false,
+			isCursorSizeAware: false,
+			withPreviewCursor: true,
 			...args,
 		});
 	}

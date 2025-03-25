@@ -30,11 +30,14 @@ export type ToolHandlerLifecycleFnProps = {
 export type BaseToolHandlerPropsFromInheritor = {
 	toolId: ToolId;
 	isSelectionAware: boolean;
+	isCursorSizeAware: boolean;
+	withPreviewCursor?: boolean;
 };
 export type BaseToolHandlerPropsFromHandler = {
 	makeSelection: (props: PaintSelection) => void;
 	setColors: SetPaintColors;
 	layers: PaintLayers;
+	cursorElement: HTMLElement;
 	setError: (err: unknown) => void;
 	textField: HTMLInputElement;
 };

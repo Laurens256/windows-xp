@@ -16,6 +16,7 @@ class PolygonHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.POLYGON,
 			isSelectionAware: true,
+			isCursorSizeAware: true,
 			...args,
 		});
 	}

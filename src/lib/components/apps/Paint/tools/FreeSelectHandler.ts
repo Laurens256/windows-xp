@@ -8,6 +8,8 @@ class FreeSelectHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.FREE_SELECT,
 			isSelectionAware: false,
+			withPreviewCursor: true,
+			isCursorSizeAware: false,
 			...args,
 		});
 	}

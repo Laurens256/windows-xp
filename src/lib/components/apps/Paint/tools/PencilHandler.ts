@@ -7,6 +7,7 @@ class PencilHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.PENCIL,
 			isSelectionAware: true,
+			isCursorSizeAware: true,
 			...args,
 		});
 	}

@@ -7,14 +7,15 @@ import type {
 	ToolHandlerLifecycleFnProps,
 } from './types';
 import { resize } from 'svelte-resize-observer-action';
-import { createTextField, getLayerContexts, setDynamicCanvasSize } from '$apps/Paint/util';
+import { createCursorElement, createTextField, getLayerContexts, setDynamicCanvasSize } from '$apps/Paint/util';
 
 class PaintHandler {
 	public canvasContainer = $state<HTMLElement | null>(null);
 	private error = $state<unknown>(null);
 
-	public layers: PaintLayers = null as unknown as PaintLayers; // is thrown if fails
-	public textField: HTMLInputElement = null as unknown as HTMLInputElement;
+	private layers: PaintLayers = null as unknown as PaintLayers; // is thrown if fails
+	private textField: HTMLInputElement = null as unknown as HTMLInputElement;
+	private cursorElement: HTMLElement = null as unknown as HTMLElement;
 
 	public colors: [string, string] = $state(['#000000', '#ffffff']);
 	public currentTool = $state<ToolHandler | null>(null);
@@ -39,11 +40,13 @@ class PaintHandler {
 			}
 			this.layers = layers;
 			this.textField = createTextField(this.canvasContainer);
+			this.cursorElement = createCursorElement(this.canvasContainer);
 
 			this.canvasContainer.addEventListener('mouseenter', this.onMouseEnter);
 			this.canvasContainer.addEventListener('mousedown', this.onMouseDown);
 			this.canvasContainer.addEventListener('mousemove', this.onMouseMove);
 			this.canvasContainer.addEventListener('mouseup', this.onMouseUp);
+			this.canvasContainer.addEventListener('wheel', this.onWheel);
 
 			new FontFace('tahoma', 'url(/fonts/tahoma.ttf)');
 
@@ -110,6 +113,7 @@ class PaintHandler {
 			layers: this.layers,
 			setError: this.setError,
 			textField: this.textField,
+			cursorElement: this.cursorElement,
 		};
 
 		this.currentTool = new toolHandlerClass(baseToolHandlerPropsFromHandler);
@@ -174,6 +178,14 @@ class PaintHandler {
 			this.currentTool!.onActionEnd(props);
 		}
 		this.isPerformingAction = false;
+	};
+	private onWheel = (e: WheelEvent) => {
+		if (e.deltaY > 0) {
+			this.cursorSize = Math.max(1, this.cursorSize - 1);
+		} else {
+			this.cursorSize = Math.min(25, this.cursorSize + 1);
+		}
+		this.initializeTool();
 	};
 }
 

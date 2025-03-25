@@ -8,6 +8,8 @@ class RectangleSelectHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.RECTANGLE_SELECT,
 			isSelectionAware: false,
+			isCursorSizeAware: false,
+			withPreviewCursor: false,
 			...args,
 		});
 	}

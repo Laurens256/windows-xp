@@ -7,6 +7,7 @@ class EraserHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.ERASER,
 			isSelectionAware: true,
+			isCursorSizeAware: true,
 			...args,
 		});
 	}
@@ -14,13 +15,14 @@ class EraserHandler extends BaseToolHandler implements ToolHandler {
 	onInitialize({ cursorSize }: ToolHandlerLifecycleFnProps) {
 		this.paintLayer.lineWidth = cursorSize;
 		this.paintLayer.globalCompositeOperation = 'destination-out';
+		this.paintLayer.lineCap = 'round';
+		this.paintLayer.lineJoin = 'round';
 	}
 
 	onActionStart({ toX, toY }: ToolHandlerFnProps) {
 		this.paintLayer.beginPath();
-		this.paintLayer.moveTo(toX, toY);
-		this.paintLayer.lineTo(toX, toY);
-		this.paintLayer.stroke();
+		this.paintLayer.arc(toX, toY, this.paintLayer.lineWidth / 2, 0, Math.PI * 2);
+		this.paintLayer.fill();
 	}
 
 	onActionMove({ fromX, fromY, toX, toY }: ToolHandlerFnProps) {

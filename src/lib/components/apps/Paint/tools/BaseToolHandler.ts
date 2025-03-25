@@ -1,6 +1,6 @@
 import {
 	type BaseToolHandlerProps,
-	type PaintSelection,
+	type PaintSelection, type Point,
 	type SetPaintColors,
 	type ToolHandler,
 	type ToolHandlerFnProps,
@@ -22,6 +22,7 @@ const functionsToExtend = [
 abstract class BaseToolHandler implements ToolHandler {
 	public toolId: ToolId;
 
+	public cursorElement: HTMLElement;
 	public paintLayer: CanvasRenderingContext2D;
 	public selectionLayer: CanvasRenderingContext2D;
 	public previewLayer: CanvasRenderingContext2D;
@@ -33,31 +34,39 @@ abstract class BaseToolHandler implements ToolHandler {
 	public setColors: SetPaintColors;
 
 	private readonly isSelectionAware: boolean;
+	private readonly isCursorSizeAware: boolean;
+	private readonly withPreviewCursor: boolean;
 
 	protected constructor({
 		toolId,
 		isSelectionAware,
+		isCursorSizeAware,
+		withPreviewCursor,
 		setColors,
 		makeSelection,
 		layers,
 		setError,
 		textField,
+		cursorElement,
 	}: BaseToolHandlerProps) {
 		this.selectionLayer = layers[PaintLayerId.SELECTION];
 		this.previewLayer = layers[PaintLayerId.PREVIEW];
 		this.paintLayer = layers[PaintLayerId.PAINT];
 		this.mousePreviewLayer = layers[PaintLayerId.MOUSE_PREVIEW];
+		this.cursorElement = cursorElement;
 
 		this.textField = textField;
 
 		this.toolId = toolId;
 		this.isSelectionAware = isSelectionAware;
+		this.isCursorSizeAware = isCursorSizeAware;
+		this.withPreviewCursor = withPreviewCursor || this.isCursorSizeAware;
+
 		this.setColors = setColors;
 		this.makeSelection = makeSelection;
 
 		// always call super method before fn method
 		// offloads having to call super method manually
-		// useful for doing repetitive checks (like checking for selection bounds)
 		for (const funcName of functionsToExtend) {
 			const originalFunction = this[funcName] as any; // can probably be solved with generics but cant be bothered
 			const baseFunction = BaseToolHandler.prototype[funcName] as any;
@@ -88,23 +97,35 @@ abstract class BaseToolHandler implements ToolHandler {
 		fn(this.mousePreviewLayer);
 	}
 
-	onInitialize({ selection }: ToolHandlerLifecycleFnProps): void | boolean {
-		const clipPath = pointUtil.createPathFromPoints(selection, this.isSelectionAware);
-		if (clipPath) {
-			const paintLayer = this.paintLayer;
-
-			paintLayer.save();
-			paintLayer.clip(clipPath);
-		}
-
+	onInitialize({ selection, cursorSize }: ToolHandlerLifecycleFnProps): void | boolean {
 		this.forEachLayer((layer) => {
-			// make sure we don't double save context (bad)
-			if (!(this.isSelectionAware && layer.canvas.id === PaintLayerId.PAINT)) {
-				layer.save();
-			}
+			layer.save();
 		});
 
+		const clipPath = pointUtil.createPathFromPoints(selection, this.isSelectionAware);
+		if (clipPath) this.paintLayer.clip(clipPath);
+
+		if (this.withPreviewCursor) {
+			const size = this.isCursorSizeAware ? cursorSize : 5;
+			Object.assign(this.cursorElement.style, {
+				display: 'block',
+				width: `${size}px`,
+				height: `${size}px`,
+			});
+		} else {
+			this.cursorElement.style.display = 'none';
+		}
+
 		return true;
+	}
+
+	private updateCursor({ x, y }: Point) {
+		if (this.withPreviewCursor) {
+			Object.assign(this.cursorElement.style, {
+				left: `${x}px`,
+				top: `${y}px`,
+			});
+		}
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -112,8 +133,9 @@ abstract class BaseToolHandler implements ToolHandler {
 		return true;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	onActionMove(_: ToolHandlerFnProps): void | boolean {
+	onActionMove({ toX, toY }: ToolHandlerFnProps): void | boolean {
+		this.updateCursor({ x: toX, y: toY });
+
 		return true;
 	}
 
@@ -122,8 +144,9 @@ abstract class BaseToolHandler implements ToolHandler {
 		return true;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	onMouseMove(_: ToolHandlerFnProps): void | boolean {
+	onMouseMove({ toX, toY }: ToolHandlerFnProps): void | boolean {
+		this.updateCursor({ x: toX, y: toY });
+
 		return true;
 	}
 

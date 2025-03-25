@@ -14,9 +14,11 @@ const getLayerContexts = (parentElement: HTMLElement) => {
 		Your browser might not support canvas.
 		`);
 
-		canvas.style.position = 'absolute';
-		canvas.style.top = '0';
-		canvas.style.pointerEvents = 'none';
+		Object.assign(canvas.style, {
+			position: 'absolute',
+			top: '0',
+			pointerEvents: 'none',
+		});
 
 		parentElement.insertAdjacentElement('afterbegin', canvas);
 
@@ -29,10 +31,31 @@ const createTextField = (parentElement: HTMLElement) => {
 	element.ariaLabel = 'choose text';
 	element.addEventListener('mousedown', (e) => e.stopImmediatePropagation());
 
-	element.style.position = 'absolute';
-	element.style.outline = '0';
-	element.style.backgroundColor = 'transparent';
-	element.style.display = 'none';
+	Object.assign(element.style, {
+		position: 'absolute',
+		outline: '0',
+		backgroundColor: 'transparent',
+		display: 'none',
+	});
+
+	parentElement.insertAdjacentElement('afterbegin', element);
+
+	return element;
+};
+
+const createCursorElement = (parentElement: HTMLElement) => {
+	const element = document.createElement('div');
+	element.id = 'cursor';
+
+	Object.assign(element.style, {
+		position: 'absolute',
+		pointerEvents: 'none',
+		border: '1px solid #000',
+		borderStyle: 'dashed',
+		borderRadius: '50%',
+		transform: 'translate(-50%, -50%)',
+		boxShadow: 'inset 0 0 3px 2px white',
+	});
 
 	parentElement.insertAdjacentElement('afterbegin', element);
 
@@ -68,4 +91,4 @@ const setDynamicCanvasSize = ({ resizerEntry, layers }: HandleParentResizeProps)
 	}
 };
 
-export { setDynamicCanvasSize, getLayerContexts, createTextField };
+export { setDynamicCanvasSize, getLayerContexts, createTextField, createCursorElement };

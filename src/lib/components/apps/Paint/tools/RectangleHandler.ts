@@ -21,6 +21,7 @@ class RectangleHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: isRounded ? ToolId.ROUNDED_RECTANGLE : ToolId.RECTANGLE,
 			isSelectionAware: true,
+			isCursorSizeAware: true,
 			...args,
 		});
 		this.isRounded = isRounded;

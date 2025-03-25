@@ -35,6 +35,8 @@ class BucketHandler extends BaseToolHandler implements ToolHandler {
 		super({
 			toolId: ToolId.BUCKET,
 			isSelectionAware: false,
+			isCursorSizeAware: false,
+			withPreviewCursor: true,
 			...args,
 		});
 	}

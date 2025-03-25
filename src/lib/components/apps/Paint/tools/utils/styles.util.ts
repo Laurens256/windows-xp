@@ -2,11 +2,17 @@ type ConfigureShapeStylesProps = {
 	layers: CanvasRenderingContext2D[];
 	color: string;
 	cursorSize: number;
+	isRound?: boolean;
 };
-const configureShapeStyles = ({ layers, color, cursorSize }: ConfigureShapeStylesProps) => {
+const configureShapeStyles = ({ layers, color, cursorSize, isRound }: ConfigureShapeStylesProps) => {
 	for (const layer of layers) {
-		layer.lineJoin = 'bevel';
-		layer.lineCap = 'square';
+		if (isRound) {
+			layer.lineJoin = 'round';
+			layer.lineCap = 'round';
+		} else {
+			layer.lineJoin = 'bevel';
+			layer.lineCap = 'square';
+		}
 		layer.lineWidth = cursorSize;
 		layer.strokeStyle = color;
 	}
