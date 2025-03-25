@@ -40,10 +40,10 @@ class PaintHandler {
 			this.layers = layers;
 			this.textField = createTextField(this.canvasContainer);
 
+			this.canvasContainer.addEventListener('mouseenter', this.onMouseEnter);
 			this.canvasContainer.addEventListener('mousedown', this.onMouseDown);
 			this.canvasContainer.addEventListener('mousemove', this.onMouseMove);
 			this.canvasContainer.addEventListener('mouseup', this.onMouseUp);
-			// this.canvasContainer.addEventListener('mouseout', this.onMouseUp);
 
 			new FontFace('tahoma', 'url(/fonts/tahoma.ttf)');
 
@@ -135,7 +135,18 @@ class PaintHandler {
 		this.selection = newSelection;
 	};
 
+	private isPrimaryMouseButton = (e: MouseEvent) => e.buttons === 1;
+	private onMouseEnter = (e: MouseEvent) => {
+		if (this.isPrimaryMouseButton(e)) {
+			this.lastX = e.offsetX;
+			this.lastY = e.offsetY;
+		} else {
+			this.isPerformingAction = false;
+		}
+	};
 	private onMouseDown = (e: MouseEvent) => {
+		if (!this.isPrimaryMouseButton(e)) return;
+
 		const props = this.makeToolHandlerProps(e);
 		if (props) {
 			this.isPerformingAction = true;

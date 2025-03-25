@@ -5,7 +5,7 @@
 	const handler = new PaintHandler();
 </script>
 
-<div class="root">
+<div class="root" draggable={false}>
 	<Sidebar
 		onToolChange={handler.setTool}
 		currentTool={handler.currentTool?.toolId}
