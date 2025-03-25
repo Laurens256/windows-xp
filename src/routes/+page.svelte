@@ -3,15 +3,9 @@
 	import { DesktopIcons, Window } from '$components';
 	import { windowStore } from '$stores';
 	import { objectUtil } from '$utils';
-	import { type WindowChildProps, WindowId } from '$types';
-	import { onMount } from 'svelte';
-	import { dev } from '$app/environment';
+	import { type WindowChildProps } from '$types';
 
 	let windows = $derived(windowStore.windows);
-
-	onMount(() => {
-		if (!dev) windowStore.openWindow(WindowId.ABOUT);
-	});
 </script>
 
 <DesktopIcons />

@@ -5,6 +5,26 @@
 	import { windowStore } from '$stores';
 	import { WindowId } from '$types';
 
+	const SESSION_STORAGE_KEY = 'notepad-text';
+	let openFileInputElement = $state<HTMLInputElement | null>(null);
+
+	const handleOpenFile = (e: Event & { currentTarget: EventTarget & HTMLInputElement; }) => {
+		const file = (e.currentTarget).files?.[0];
+		if (!file) return;
+
+		const reader = new FileReader();
+		reader.onload = () => {
+			if (typeof reader.result === 'string') {
+				textValue = reader.result;
+			}
+		};
+		reader.readAsText(file);
+	};
+
+	const handleSave = () => {
+		sessionStorage.setItem(SESSION_STORAGE_KEY, textValue);
+	};
+
 	const handleDownloadFile = () => {
 		const blob = new Blob([textValue], { type: 'text/plain' });
 		fileUtil.downloadFile({ blob, filename: 'about.txt' });
@@ -16,9 +36,11 @@
 			entries2D: [
 				[
 					{ label: 'New', onclick: () => textValue = '' },
+					{ label: 'Open', onclick: () => openFileInputElement?.click() },
+					{ label: 'Save', onclick: handleSave },
 					{ label: 'Save as...', onclick: handleDownloadFile },
 				],
-				[{ label: 'Exit', onclick: () => windowStore.closeWindow(WindowId.ABOUT) }]],
+				[{ label: 'Exit', onclick: () => windowStore.closeWindow(WindowId.NOTEPAD) }]],
 		},
 		{ label: 'Edit' },
 		{ label: 'Format' },
@@ -48,14 +70,28 @@ This website works best when using a mouse.
 
 - Double-click the programs on the desktop to open them
 - Most windows can be resized and moved around
-- Each program has different interactions, so feel free to play around :3`,
+- Each program has different interactions, so feel free to play around`,
 	);
+
+	$effect(() => {
+		const sessionStorageValue = sessionStorage.getItem(SESSION_STORAGE_KEY);
+		if (sessionStorageValue) {
+			textValue = sessionStorageValue;
+		}
+	});
 </script>
 
 <article class="container">
 	<HeaderBar {buttons} />
 	<textarea class="textarea" bind:value={textValue}></textarea>
 </article>
+<input
+	type="file"
+	class="input"
+	accept=".txt,.json,.md,.csv,.html,.svg"
+	onchange={handleOpenFile}
+	bind:this={openFileInputElement}
+>
 
 <style>
   .container {
@@ -75,4 +111,7 @@ This website works best when using a mouse.
     font-family: var(--tahoma-font), var(--fallback-font);
     flex-grow: 1;
   }
+	.input {
+		display: none;
+	}
 </style>

@@ -1,4 +1,4 @@
-import { About, Command, Calculator, Paint, Minesweeper } from '$components/apps';
+import { Notepad, Command, Calculator, Paint, Minesweeper } from '$components/apps';
 import { WindowId, type GlobalWindowState, type WindowChildProps } from '$types';
 import type { Component } from 'svelte';
 import type { Props as WindowComponentProps } from '$components/Window/types';
@@ -12,9 +12,9 @@ type WindowData = {
 } & Partial<Omit<WindowComponentProps, keyof GlobalWindowState | 'component'>>;
 
 const windowsData: Record<WindowId, WindowData> = {
-	[WindowId.ABOUT]: {
-		component: About,
-		windowTitle: 'About',
+	[WindowId.NOTEPAD]: {
+		component: Notepad,
+		windowTitle: 'Notepad',
 		icon: IconAppNotepad,
 	},
 	[WindowId.CMD]: {

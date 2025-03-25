@@ -16,7 +16,7 @@
 			{@const staticWindowData = windowsData[windowId]}
 
 			<li class="listItem" transition:slide={{ duration: 100 }}>
-				<button class="taskbarApp" onclick={() => windowStore.toggleWindowMinimize(windowId)}>
+				<button class="taskbarApp" onclick={() => windowStore.focusOrMinimizeWindow(windowId)}>
 					<img src={staticWindowData.icon} alt="" class="appIcon">
 					{staticWindowData.windowTitle}
 				</button>

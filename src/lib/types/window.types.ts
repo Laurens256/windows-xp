@@ -9,7 +9,7 @@ export type Position = {
 };
 
 export enum WindowId {
-	ABOUT = 'about',
+	NOTEPAD = 'notepad',
 	CMD = 'cmd',
 	CALCULATOR = 'calculator',
 	PAINT = 'paint',

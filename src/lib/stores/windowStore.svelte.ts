@@ -1,98 +1,92 @@
 import { type GlobalWindowState, WindowId } from '$types';
+import { dev } from '$app/environment';
 
-const windows: { [id in WindowId]?: GlobalWindowState } = $state({});
+class WindowStore {
+	private _windows = $state<{ [id in WindowId]?: GlobalWindowState }>({});
 
-type ChangeWindowStateKey = Exclude<keyof GlobalWindowState, 'windowId'>;
-type BooleanWindowStateKey = Exclude<ChangeWindowStateKey, 'zIndex'>;
-
-const changeWindowState = <K extends ChangeWindowStateKey>(
-	id: WindowId,
-	key: K,
-	value: GlobalWindowState[K],
-) => {
-	const window = windows[id];
-	if (window) {
-		window[key] = value;
+	get windows() {
+		return this._windows;
 	}
-};
-const toggleWindowState = (
-	id: WindowId,
-	key: BooleanWindowStateKey,
-) => {
-	const window = windows[id];
-	if (window) {
-		const newVal = !window[key];
-		window[key] = newVal;
-		return newVal;
+	public getWindow(id: WindowId) {
+		return this._windows[id];
 	}
-};
 
-const findHighestIndexUnminizedWindow = (): WindowId | undefined => {
-	let highestZIndexWindow: GlobalWindowState | undefined;
-
-	for (const window of Object.values(windows)) {
-		const hasHigherZIndex = highestZIndexWindow === undefined || window.zIndex > highestZIndexWindow.zIndex;
-
-		if (!window.isMinimized && (hasHigherZIndex)) {
-			highestZIndexWindow = window;
+	constructor(initialOpenWindows: WindowId[] = []) {
+		for (const id of initialOpenWindows) {
+			this.openWindow(id);
 		}
 	}
 
-	return highestZIndexWindow?.windowId;
-};
+	private findHighestIndexUnminizedWindow(): WindowId | undefined {
+		let highestZIndexWindow: GlobalWindowState | undefined;
 
-export default {
-	get windows() {
-		return windows;
-	},
+		for (const window of Object.values(this._windows)) {
+			const hasHigherZIndex = highestZIndexWindow === undefined || window.zIndex > highestZIndexWindow.zIndex;
 
-	setFocusedWindow(id: WindowId | null | undefined) {
-		const maxZIndex = Math.max(
-			...Object.values(windows).map(({ zIndex }) => zIndex),
-			0,
-		);
-
-		Object.values(windows).forEach((window) => {
-			const willBecomeFocused = window.windowId === id;
-			window.isFocused = willBecomeFocused;
-
-			if (willBecomeFocused) {
-				window.zIndex = maxZIndex + 1;
+			if (!window.isMinimized && (hasHigherZIndex)) {
+				highestZIndexWindow = window;
 			}
-		});
-	},
+		}
 
-	closeWindow(id: WindowId) {
-		delete windows[id];
-	},
-	openWindow(id: WindowId) {
-		windows[id] = {
+		return highestZIndexWindow?.windowId;
+	}
+
+	private changeWindowState<T>(
+		windowOrId: WindowId | GlobalWindowState | undefined,
+		cb: (window: GlobalWindowState) => T,
+	) {
+		const window = typeof windowOrId === 'string' ? this._windows[windowOrId] : windowOrId;
+		if (window) return cb(window);
+	}
+
+	public setFocusedWindow(id: WindowId | null | undefined) {
+		const windows = Object.values(this._windows);
+		const maxZIndex = Math.max(...windows.map(({ zIndex }) => zIndex), 0);
+
+		for (const w of windows) {
+			this.changeWindowState(w, (window) => {
+				const willBecomeFocused = window.windowId === id;
+				window.isFocused = willBecomeFocused;
+
+				if (willBecomeFocused) {
+					window.zIndex = maxZIndex + 1;
+					window.isMinimized = false;
+				}
+			});
+		}
+	}
+
+	public closeWindow(id: WindowId) {
+		delete this._windows[id];
+	}
+
+	public openWindow(id: WindowId) {
+		this._windows[id] = {
 			windowId: id,
 			isMinimized: false,
 			isFocused: true,
-			zIndex: Object.keys(windows).length + 1,
+			zIndex: Object.keys(this._windows).length + 1,
 		};
 		this.setFocusedWindow(id);
-	},
+	}
 
-	minimizeWindow(id: WindowId) {
-		changeWindowState(id, 'isMinimized', true);
+	public focusOrMinimizeWindow(id: WindowId) {
+		const window = this.getWindow(id);
+		if (!window) return;
 
-		const nextWindowToFocus = findHighestIndexUnminizedWindow();
-		this.setFocusedWindow(nextWindowToFocus);
-	},
-	unMinimizeWindow(id: WindowId) {
-		changeWindowState(id, 'isMinimized', false);
-		this.setFocusedWindow(id);
-	},
-	toggleWindowMinimize(id: WindowId) {
-		const willBeMinimized = toggleWindowState(id, 'isMinimized');
-
-		if (willBeMinimized) {
-			const nextWindowToFocus = findHighestIndexUnminizedWindow();
-			this.setFocusedWindow(nextWindowToFocus);
-		} else {
+		if (window.isMinimized || !window.isFocused) {
 			this.setFocusedWindow(id);
+		} else {
+			this.minimizeWindow(id);
 		}
-	},
-};
+	}
+
+	public minimizeWindow(id: WindowId) {
+		this.changeWindowState(id, (window) => window.isMinimized = true);
+
+		const nextWindowToFocus = this.findHighestIndexUnminizedWindow();
+		this.setFocusedWindow(nextWindowToFocus);
+	}
+}
+
+export default new WindowStore(dev ? [] : [WindowId.NOTEPAD]);

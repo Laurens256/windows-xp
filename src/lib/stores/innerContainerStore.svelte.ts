@@ -1,31 +1,33 @@
 import type { Size } from '$types';
 
-let innerContainer = $state<HTMLElement | null>(null);
-let containerWidth = $state(0);
-let containerHeight = $state(0);
+class InnerContainerStore {
+	private _innerContainer = $state<HTMLElement | null>(null);
+	private _containerWidth = $state(0);
+	private _containerHeight = $state(0);
 
-const containerSize = $derived<Size>({ width: containerWidth, height: containerHeight });
+	private _containerSize = $derived<Size>({ width: this._containerWidth, height: this._containerHeight });
 
-export default {
 	get element() {
-		return innerContainer;
-	},
+		return this._innerContainer;
+	}
 	set element(newContainer: HTMLElement | null) {
-		innerContainer = newContainer;
-	},
+		this._innerContainer = newContainer;
+	}
 	get size() {
-		return containerSize;
-	},
+		return this._containerSize;
+	}
 	get width() {
-		return containerWidth;
-	},
+		return this._containerWidth;
+	}
 	set width(newWidth) {
-		containerWidth = newWidth;
-	},
+		this._containerWidth = newWidth;
+	}
 	get height(){
-		return containerHeight;
-	},
+		return this._containerHeight;
+	}
 	set height(newHeight) {
-		containerHeight = newHeight;
-	},
-};
+		this._containerHeight = newHeight;
+	}
+}
+
+export default new InnerContainerStore();
